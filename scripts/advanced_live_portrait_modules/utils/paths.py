@@ -4,10 +4,12 @@ import os
 from modules.paths import models_path
 
 
-PROJECT_ROOT_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..")
+PROJECT_ROOT_DIR = os.path.normpath(os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", ".."))
+EXTENSION_DIR = os.path.normpath(os.path.join(PROJECT_ROOT_DIR, ".."))
+FORGE_DIR = os.path.normpath(os.path.join(models_path, ".."))
 MODELS_DIR = os.path.join(models_path, "AdvancedPortrait")
 MODELS_ANIMAL_DIR = os.path.join(MODELS_DIR, "animal")
-OUTPUTS_DIR = os.path.join(models_path, "..", "outputs")
+OUTPUTS_DIR = os.path.join(FORGE_DIR, "outputs", "Ad")
 TEMP_DIR = os.path.join(OUTPUTS_DIR, "temp")
 EXP_OUTPUT_DIR = os.path.join(OUTPUTS_DIR, "exp_data")
 MODEL_CONFIG = os.path.join(PROJECT_ROOT_DIR, "advanced_live_portrait_modules", "config", "models.yaml")
