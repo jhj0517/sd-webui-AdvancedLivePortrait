@@ -1,25 +1,17 @@
-from scripts.advanced_live_portrait_modules.installation import *
-install_sam()
-from scripts.layer_divider_modules import sam2
-from scripts.layer_divider_modules.ui_utils import *
-from scripts.layer_divider_modules.html_constants import *
-from scripts.layer_divider_modules.video_utils import get_frames_from_dir
-from scripts.layer_divider_modules.default_hparams import DEFAULT_HPARAMS
-from scripts.layer_divider_modules.model_downloader import DEFAULT_MODEL_TYPE
-from scripts.layer_divider_modules.paths import (SAM2_CONFIGS_DIR, TEMP_DIR, TEMP_OUT_DIR, OUTPUT_DIR,
-                                                 OUTPUT_FILTER_DIR, OUTPUT_PSD_DIR, init_paths)
-from scripts.layer_divider_modules.constants import (AUTOMATIC_MODE, BOX_PROMPT_MODE, COLOR_FILTER, PIXELIZE_FILTER,
-                                                     IMAGE_FILE_EXT, VIDEO_FILE_EXT, DEFAULT_COLOR, DEFAULT_PIXEL_SIZE)
+from scripts.installation import install
+install()
 
+import argparse
 import gradio as gr
-from gradio_image_prompter import ImagePrompter
-import os
-import yaml
-from typing import Dict, Optional
+from gradio_i18n import Translate, gettext as _
 
-from advanced_live_portrait_modules import scripts, script_callbacks
+from scripts.advanced_live_portrait_modules.live_portrait.live_portrait_inferencer import LivePortraitInferencer
+from scripts.advanced_live_portrait_modules.utils.paths import *
+from scripts.advanced_live_portrait_modules.utils.helper import str2bool
+from scripts.advanced_live_portrait_modules.utils.constants import *
+from modules import scripts, script_callbacks
 
-sam_inf = sam2.SamInference()
+
 
 
 class App:
@@ -57,8 +49,8 @@ class App:
             gr.Slider(label=_("Crop Factor"), minimum=1.5, maximum=2.5, step=0.1, value=1.7)
         ]
 
-    def launch(self):
-        with self.app:
+    def create_block(self):
+        with self.app as block:
             with self.i18n:
                 gr.Markdown(REPO_MARKDOWN, elem_id="md_project")
 
@@ -95,16 +87,7 @@ class App:
                 btn_gen.click(self.inferencer.edit_expression,
                               inputs=params + opt_in_features_params,
                               outputs=img_out)
-
-            gradio_launch_args = {
-                "inbrowser": self.args.inbrowser,
-                "share": self.args.share,
-                "server_name": self.args.server_name,
-                "server_port": self.args.server_port,
-                "root_path": self.args.root_path,
-                "auth": (self.args.username, self.args.password) if self.args.username and self.args.password else None,
-            }
-            self.app.queue().launch(**gradio_launch_args)
+        return block
 
     @staticmethod
     def open_folder(folder_path: str):
@@ -114,18 +97,11 @@ class App:
         os.system(f"start {folder_path}")
 
 def add_tab():
-    global sam_inf
 
-    init_paths()
-
+    app = App()
+    block_tab = app.create_block()
 
     return [(block_tab, "AdvancedLivePortrait", "advanced_live_portrait")]
 
 
-def on_unload():
-    global sam_inf
-    sam_inf = None
-
-
 script_callbacks.on_ui_tabs(add_tab)
-script_callbacks.on_script_unloaded(on_unload)
