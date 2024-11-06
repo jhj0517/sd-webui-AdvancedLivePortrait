@@ -1,0 +1,8 @@
+venv/
+.idea/
+models/
+outputs/
+*.png
+*.jpg
+
+**/.pytest_cache
