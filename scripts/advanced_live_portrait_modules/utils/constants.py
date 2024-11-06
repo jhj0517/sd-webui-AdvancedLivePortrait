@@ -16,7 +16,7 @@ class SamplePart(Enum):
 
 
 REPO_MARKDOWN = """
-## [AdvancedLivePortrait-WebUI](https://github.com/jhj0517/AdvancedLivePortrait-WebUI/tree/master)
+## [sd-webui-AdvancedLivePortrait](https://https://github.com/jhj0517/sd-webui-AdvancedLivePortrait)
 """
 
 GRADIO_CSS = """
