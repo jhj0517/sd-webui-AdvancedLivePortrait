@@ -1,11 +1,13 @@
 import functools
 import os
 
+from modules.paths import models_path
+
 
 PROJECT_ROOT_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..")
-MODELS_DIR = os.path.join(PROJECT_ROOT_DIR, "models")
+MODELS_DIR = os.path.join(models_path, "AdvancedPortrait")
 MODELS_ANIMAL_DIR = os.path.join(MODELS_DIR, "animal")
-OUTPUTS_DIR = os.path.join(PROJECT_ROOT_DIR, "outputs")
+OUTPUTS_DIR = os.path.join(models_path, "..", "outputs")
 TEMP_DIR = os.path.join(OUTPUTS_DIR, "temp")
 EXP_OUTPUT_DIR = os.path.join(OUTPUTS_DIR, "exp_data")
 MODEL_CONFIG = os.path.join(PROJECT_ROOT_DIR, "advanced_live_portrait_modules", "config", "models.yaml")
