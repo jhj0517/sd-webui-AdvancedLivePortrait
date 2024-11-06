@@ -1,0 +1,259 @@
+en: # English
+  Language: Language
+  Reference Image: Reference Image
+  Output Image: Output Image
+  Rotate Pitch: Rotate Pitch
+  Rotate Yaw: Rotate Yaw
+  Rotate Roll: Rotate Roll
+  Blink: Blink
+  Eyebrow: Eyebrow
+  Wink: Wink
+  Pupil X: Pupil X
+  Pupil Y: Pupil Y
+  AAA: AAA
+  EEE: EEE
+  WOO: WOO
+  Smile: Smile
+  Source Ratio: Source Ratio
+  Sample Ratio: Sample Ratio
+  Sample Parts: Sample Parts
+  Crop Factor: Crop Factor
+  OnlyExpression: OnlyExpression
+  OnlyRotation: OnlyRotation
+  OnlyMouth: OnlyMouth
+  OnlyEyes: OnlyEyes
+  All: All
+
+ko: # Korean
+  Language: 언어
+  Reference Image: 참조 이미지
+  Output Image: 결과 이미지
+  Rotate Pitch: Y축 회전
+  Rotate Yaw: Z축 회전
+  Rotate Roll: X축 회전
+  Blink: 눈 깜빡임
+  Eyebrow: 눈썹
+  Wink: 윙크
+  Pupil X: 눈동자 X
+  Pupil Y: 눈동자 Y
+  AAA: 아아아
+  EEE: 이이이
+  WOO: 우우우
+  Smile: 미소
+  Source Ratio: 원본 반영 비율
+  Sample Ratio: 샘플 비율
+  Sample Parts: 샘플 파트
+  Crop Factor: Crop Factor
+  OnlyExpression: 표정만
+  OnlyRotation: 회전만
+  OnlyMouth: 입만
+  OnlyEyes: 눈만
+  All: 전부
+
+ja: # Japanese
+  Language: 言語
+  Reference Image: Reference Image
+  Output Image: Output Image
+  Rotate Pitch: Rotate Pitch
+  Rotate Yaw: Rotate Yaw
+  Rotate Roll: Rotate Roll
+  Blink: Blink
+  Eyebrow: Eyebrow
+  Wink: Wink
+  Pupil X: Pupil X
+  Pupil Y: Pupil Y
+  AAA: AAA
+  EEE: EEE
+  WOO: WOO
+  Smile: Smile
+  Source Ratio: Source Ratio
+  Sample Ratio: Sample Ratio
+  Sample Parts: Sample Parts
+  Crop Factor: Crop Factor
+  OnlyExpression: OnlyExpression
+  OnlyRotation: OnlyRotation
+  OnlyMouth: OnlyMouth
+  OnlyEyes: OnlyEyes
+  All: All
+
+es: # Spanish
+  Language: Idioma
+  Reference Image: Reference Image
+  Output Image: Output Image
+  Rotate Pitch: Rotate Pitch
+  Rotate Yaw: Rotate Yaw
+  Rotate Roll: Rotate Roll
+  Blink: Blink
+  Eyebrow: Eyebrow
+  Wink: Wink
+  Pupil X: Pupil X
+  Pupil Y: Pupil Y
+  AAA: AAA
+  EEE: EEE
+  WOO: WOO
+  Smile: Smile
+  Source Ratio: Source Ratio
+  Sample Ratio: Sample Ratio
+  Sample Parts: Sample Parts
+  Crop Factor: Crop Factor
+  OnlyExpression: OnlyExpression
+  OnlyRotation: OnlyRotation
+  OnlyMouth: OnlyMouth
+  OnlyEyes: OnlyEyes
+  All: All
+
+fr: # French
+  Language: Langue
+  Reference Image: Reference Image
+  Output Image: Output Image
+  Rotate Pitch: Rotate Pitch
+  Rotate Yaw: Rotate Yaw
+  Rotate Roll: Rotate Roll
+  Blink: Blink
+  Eyebrow: Eyebrow
+  Wink: Wink
+  Pupil X: Pupil X
+  Pupil Y: Pupil Y
+  AAA: AAA
+  EEE: EEE
+  WOO: WOO
+  Smile: Smile
+  Source Ratio: Source Ratio
+  Sample Ratio: Sample Ratio
+  Sample Parts: Sample Parts
+  Crop Factor: Crop Factor
+  OnlyExpression: OnlyExpression
+  OnlyRotation: OnlyRotation
+  OnlyMouth: OnlyMouth
+  OnlyEyes: OnlyEyes
+  All: All
+
+de: # German
+  Language: Sprache
+  Reference Image: Reference Image
+  Output Image: Output Image
+  Rotate Pitch: Rotate Pitch
+  Rotate Yaw: Rotate Yaw
+  Rotate Roll: Rotate Roll
+  Blink: Blink
+  Eyebrow: Eyebrow
+  Wink: Wink
+  Pupil X: Pupil X
+  Pupil Y: Pupil Y
+  AAA: AAA
+  EEE: EEE
+  WOO: WOO
+  Smile: Smile
+  Source Ratio: Source Ratio
+  Sample Ratio: Sample Ratio
+  Sample Parts: Sample Parts
+  Crop Factor: Crop Factor
+  OnlyExpression: OnlyExpression
+  OnlyRotation: OnlyRotation
+  OnlyMouth: OnlyMouth
+  OnlyEyes: OnlyEyes
+  All: All
+
+zh: # Chinese
+  Language: 语言
+  Reference Image: Reference Image
+  Output Image: Output Image
+  Rotate Pitch: Rotate Pitch
+  Rotate Yaw: Rotate Yaw
+  Rotate Roll: Rotate Roll
+  Blink: Blink
+  Eyebrow: Eyebrow
+  Wink: Wink
+  Pupil X: Pupil X
+  Pupil Y: Pupil Y
+  AAA: AAA
+  EEE: EEE
+  WOO: WOO
+  Smile: Smile
+  Source Ratio: Source Ratio
+  Sample Ratio: Sample Ratio
+  Sample Parts: Sample Parts
+  Crop Factor: Crop Factor
+  OnlyExpression: OnlyExpression
+  OnlyRotation: OnlyRotation
+  OnlyMouth: OnlyMouth
+  OnlyEyes: OnlyEyes
+  All: All
+
+uk: # Ukrainian
+  Language: Мова
+  Reference Image: Reference Image
+  Output Image: Output Image
+  Rotate Pitch: Rotate Pitch
+  Rotate Yaw: Rotate Yaw
+  Rotate Roll: Rotate Roll
+  Blink: Blink
+  Eyebrow: Eyebrow
+  Wink: Wink
+  Pupil X: Pupil X
+  Pupil Y: Pupil Y
+  AAA: AAA
+  EEE: EEE
+  WOO: WOO
+  Smile: Smile
+  Source Ratio: Source Ratio
+  Sample Ratio: Sample Ratio
+  Sample Parts: Sample Parts
+  Crop Factor: Crop Factor
+  OnlyExpression: OnlyExpression
+  OnlyRotation: OnlyRotation
+  OnlyMouth: OnlyMouth
+  OnlyEyes: OnlyEyes
+  All: All
+
+ru: # Russian
+  Language: Язык
+  Reference Image: Reference Image
+  Output Image: Output Image
+  Rotate Pitch: Rotate Pitch
+  Rotate Yaw: Rotate Yaw
+  Rotate Roll: Rotate Roll
+  Blink: Blink
+  Eyebrow: Eyebrow
+  Wink: Wink
+  Pupil X: Pupil X
+  Pupil Y: Pupil Y
+  AAA: AAA
+  EEE: EEE
+  WOO: WOO
+  Smile: Smile
+  Source Ratio: Source Ratio
+  Sample Ratio: Sample Ratio
+  Sample Parts: Sample Parts
+  Crop Factor: Crop Factor
+  OnlyExpression: OnlyExpression
+  OnlyRotation: OnlyRotation
+  OnlyMouth: OnlyMouth
+  OnlyEyes: OnlyEyes
+  All: All
+
+tr: # Turkish
+  Language: Dil
+  Reference Image: Reference Image
+  Output Image: Output Image
+  Rotate Pitch: Rotate Pitch
+  Rotate Yaw: Rotate Yaw
+  Rotate Roll: Rotate Roll
+  Blink: Blink
+  Eyebrow: Eyebrow
+  Wink: Wink
+  Pupil X: Pupil X
+  Pupil Y: Pupil Y
+  AAA: AAA
+  EEE: EEE
+  WOO: WOO
+  Smile: Smile
+  Source Ratio: Source Ratio
+  Sample Ratio: Sample Ratio
+  Sample Parts: Sample Parts
+  Crop Factor: Crop Factor
+  OnlyExpression: OnlyExpression
+  OnlyRotation: OnlyRotation
+  OnlyMouth: OnlyMouth
+  OnlyEyes: OnlyEyes
+  All: All
