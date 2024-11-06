@@ -12,7 +12,8 @@ MODELS_ANIMAL_DIR = os.path.join(MODELS_DIR, "animal")
 OUTPUTS_DIR = os.path.join(FORGE_DIR, "outputs", "Ad")
 TEMP_DIR = os.path.join(OUTPUTS_DIR, "temp")
 EXP_OUTPUT_DIR = os.path.join(OUTPUTS_DIR, "exp_data")
-MODEL_CONFIG = os.path.join(PROJECT_ROOT_DIR, "advanced_live_portrait_modules", "config", "models.yaml")
+CONFIG_DIR = os.path.join(PROJECT_ROOT_DIR, "advanced_live_portrait_modules", "config")
+MODEL_CONFIG = os.path.join(CONFIG_DIR, "models.yaml")
 MODEL_PATHS = {
     "appearance_feature_extractor": os.path.join(MODELS_DIR, "appearance_feature_extractor.safetensors"),
     "motion_extractor": os.path.join(MODELS_DIR, "motion_extractor.safetensors"),
@@ -31,7 +32,7 @@ MODEL_ANIMAL_PATHS = {
     "yolo_v5s_animal_det": os.path.join(MODELS_ANIMAL_DIR, "yolo_v5s_animal_det.n2x")
 }
 MASK_TEMPLATES = os.path.join(PROJECT_ROOT_DIR, "advanced_live_portrait_modules", "utils", "resources", "mask_template.png")
-I18N_YAML_PATH = os.path.join(PROJECT_ROOT_DIR, "i18n", "translation.yaml")
+I18N_YAML_PATH = os.path.join(CONFIG_DIR, "translation.yaml")
 
 
 def get_auto_incremental_file_path(dir_path: str, extension: str, prefix: str = ""):
