@@ -1,12 +1,13 @@
-import importlib.util
+import pkg_resources
 
 from scripts.advanced_live_portrait_modules.utils.paths import *
 
 
 def is_installed(package_name):
-    if importlib.util.find_spec(package_name) is not None:
+    try:
+        pkg_resources.get_distribution(package_name)
         return True
-    else:
+    except pkg_resources.DistributionNotFound:
         return False
 
 
