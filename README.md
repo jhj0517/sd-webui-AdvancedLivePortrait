@@ -16,7 +16,7 @@ If you want to try it in a dedicated webui rather than as an extension:
 git clone https://github.com/jhj0517/sd-webui-AdvancedLivePortrait.git
 ```
 
-## Citation and Thanks
+## ❤️ Citation and Thanks 
 1. LivePortrait paper comes from
 ```bibtex
 @article{guo2024liveportrait,
