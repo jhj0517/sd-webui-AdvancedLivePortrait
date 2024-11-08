@@ -81,7 +81,7 @@ class App:
                 )
 
                 btn_openfolder.click(
-                    fn=lambda: self.open_folder(self.args.output_dir), inputs=None, outputs=None
+                    fn=lambda: self.open_folder(OUTPUTS_DIR), inputs=None, outputs=None
                 )
 
                 btn_gen.click(self.inferencer.edit_expression,
