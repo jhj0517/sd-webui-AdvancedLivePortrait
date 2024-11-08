@@ -77,11 +77,12 @@ class App:
                     triggers=[param.change for param in params],
                     fn=self.inferencer.edit_expression,
                     inputs=params + opt_in_features_params,
-                    outputs=img_out
+                    outputs=img_out,
+                    show_progress="minimal"
                 )
 
                 btn_openfolder.click(
-                    fn=lambda: self.open_folder(self.args.output_dir), inputs=None, outputs=None
+                    fn=lambda: self.open_folder(OUTPUTS_DIR), inputs=None, outputs=None
                 )
 
                 btn_gen.click(self.inferencer.edit_expression,
