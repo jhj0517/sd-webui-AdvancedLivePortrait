@@ -77,7 +77,8 @@ class App:
                     triggers=[param.change for param in params],
                     fn=self.inferencer.edit_expression,
                     inputs=params + opt_in_features_params,
-                    outputs=img_out
+                    outputs=img_out,
+                    show_progress="minimal"
                 )
 
                 btn_openfolder.click(
