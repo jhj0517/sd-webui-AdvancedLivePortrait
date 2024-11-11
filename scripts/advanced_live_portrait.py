@@ -1,6 +1,8 @@
 from scripts.installation import install
 install()
 
+import sys
+import subprocess
 import argparse
 import gradio as gr
 from gradio_i18n import Translate, gettext as _
@@ -91,10 +93,21 @@ class App:
 
     @staticmethod
     def open_folder(folder_path: str):
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path, exist_ok=True)
-            print(f"The directory path {folder_path} has newly created.")
-        os.system(f"start {folder_path}")
+        try:
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path, exist_ok=True)
+                print(f"The directory path {folder_path} has newly created.")
+
+            if os.name == 'nt':  # Windows
+                os.startfile(folder_path)
+            elif os.name == 'posix':  # macOS and Linux
+                if sys.platform == 'darwin':  # macOS
+                    subprocess.Popen(['open', folder_path])
+                elif sys.platform.startswith('linux'):  # Linux
+                    subprocess.Popen(['xdg-open', folder_path])
+        except Exception as e:
+            print("Failed to open directory")
+            raise
 
 def add_tab():
 
