@@ -105,6 +105,8 @@ class App:
                     subprocess.Popen(['open', folder_path])
                 elif sys.platform.startswith('linux'):  # Linux
                     subprocess.Popen(['xdg-open', folder_path])
+            else:
+                os.system(f"start {folder_path}")
         except Exception as e:
             print("Failed to open directory")
             raise
