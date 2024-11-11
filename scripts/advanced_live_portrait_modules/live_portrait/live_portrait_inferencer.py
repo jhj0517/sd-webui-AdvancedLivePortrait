@@ -11,6 +11,8 @@ from gradio_i18n import Translate, gettext as _
 from ultralytics.utils import LOGGER as ultralytics_logger
 from enum import Enum
 from typing import Union
+import torch
+import numpy as np
 
 from scripts.advanced_live_portrait_modules.utils.paths import *
 from scripts.advanced_live_portrait_modules.utils.image_helper import *
@@ -154,91 +156,93 @@ class LivePortraitInferencer:
                         sample_image=None,
                         motion_link=None,
                         add_exp=None):
-        if isinstance(model_type, ModelType):
-            model_type = model_type.value
-        if model_type not in [mode.value for mode in ModelType]:
-            model_type = ModelType.HUMAN
 
-        if self.pipeline is None or model_type != self.model_type:
-            self.load_models(
-                model_type=model_type
-            )
+        with torch.autocast(device_type=self.device, enabled=(self.device == "cuda")):
+            if isinstance(model_type, ModelType):
+                model_type = model_type.value
+            if model_type not in [mode.value for mode in ModelType]:
+                model_type = ModelType.HUMAN
 
-        try:
-            rotate_yaw = -rotate_yaw
+            if self.pipeline is None or model_type != self.model_type:
+                self.load_models(
+                    model_type=model_type
+                )
 
-            new_editor_link = None
-            if isinstance(motion_link, np.ndarray) and motion_link:
-                self.psi = motion_link[0]
-                new_editor_link = motion_link.copy()
-            elif src_image is not None:
-                if id(src_image) != id(self.src_image) or self.crop_factor != crop_factor:
-                    self.crop_factor = crop_factor
-                    self.psi = self.prepare_source(src_image, crop_factor)
-                    self.src_image = src_image
-                new_editor_link = []
-                new_editor_link.append(self.psi)
-            else:
-                return None
+            try:
+                rotate_yaw = -rotate_yaw
 
-            psi = self.psi
-            s_info = psi.x_s_info
-            #delta_new = copy.deepcopy()
-            s_exp = s_info['exp'] * src_ratio
-            s_exp[0, 5] = s_info['exp'][0, 5]
-            s_exp += s_info['kp']
+                new_editor_link = None
+                if isinstance(motion_link, np.ndarray) and motion_link:
+                    self.psi = motion_link[0]
+                    new_editor_link = motion_link.copy()
+                elif src_image is not None:
+                    if id(src_image) != id(self.src_image) or self.crop_factor != crop_factor:
+                        self.crop_factor = crop_factor
+                        self.psi = self.prepare_source(src_image, crop_factor)
+                        self.src_image = src_image
+                    new_editor_link = []
+                    new_editor_link.append(self.psi)
+                else:
+                    return None
 
-            es = ExpressionSet()
+                psi = self.psi
+                s_info = psi.x_s_info
+                #delta_new = copy.deepcopy()
+                s_exp = s_info['exp'] * src_ratio
+                s_exp[0, 5] = s_info['exp'][0, 5]
+                s_exp += s_info['kp']
 
-            if isinstance(sample_image, np.ndarray) and sample_image:
-                if id(self.sample_image) != id(sample_image):
-                    self.sample_image = sample_image
-                    d_image_np = (sample_image * 255).byte().numpy()
-                    d_face = self.crop_face(d_image_np[0], 1.7)
-                    i_d = self.prepare_src_image(d_face)
-                    self.d_info = self.pipeline.get_kp_info(i_d)
-                    self.d_info['exp'][0, 5, 0] = 0
-                    self.d_info['exp'][0, 5, 1] = 0
+                es = ExpressionSet()
 
-                # "OnlyExpression", "OnlyRotation", "OnlyMouth", "OnlyEyes", "All"
-                if sample_parts == SamplePart.ONLY_EXPRESSION.value or sample_parts == SamplePart.ONLY_EXPRESSION.ALL.value:
-                    es.e += self.d_info['exp'] * sample_ratio
-                if sample_parts == SamplePart.ONLY_ROTATION.value or sample_parts == SamplePart.ONLY_ROTATION.ALL.value:
-                    rotate_pitch += self.d_info['pitch'] * sample_ratio
-                    rotate_yaw += self.d_info['yaw'] * sample_ratio
-                    rotate_roll += self.d_info['roll'] * sample_ratio
-                elif sample_parts == SamplePart.ONLY_MOUTH.value:
-                    self.retargeting(es.e, self.d_info['exp'], sample_ratio, (14, 17, 19, 20))
-                elif sample_parts == SamplePart.ONLY_EYES.value:
-                    self.retargeting(es.e, self.d_info['exp'], sample_ratio, (1, 2, 11, 13, 15, 16))
+                if isinstance(sample_image, np.ndarray) and sample_image:
+                    if id(self.sample_image) != id(sample_image):
+                        self.sample_image = sample_image
+                        d_image_np = (sample_image * 255).byte().numpy()
+                        d_face = self.crop_face(d_image_np[0], 1.7)
+                        i_d = self.prepare_src_image(d_face)
+                        self.d_info = self.pipeline.get_kp_info(i_d)
+                        self.d_info['exp'][0, 5, 0] = 0
+                        self.d_info['exp'][0, 5, 1] = 0
 
-            es.r = self.calc_fe(es.e, blink, eyebrow, wink, pupil_x, pupil_y, aaa, eee, woo, smile,
-                                rotate_pitch, rotate_yaw, rotate_roll)
+                    # "OnlyExpression", "OnlyRotation", "OnlyMouth", "OnlyEyes", "All"
+                    if sample_parts == SamplePart.ONLY_EXPRESSION.value or sample_parts == SamplePart.ONLY_EXPRESSION.ALL.value:
+                        es.e += self.d_info['exp'] * sample_ratio
+                    if sample_parts == SamplePart.ONLY_ROTATION.value or sample_parts == SamplePart.ONLY_ROTATION.ALL.value:
+                        rotate_pitch += self.d_info['pitch'] * sample_ratio
+                        rotate_yaw += self.d_info['yaw'] * sample_ratio
+                        rotate_roll += self.d_info['roll'] * sample_ratio
+                    elif sample_parts == SamplePart.ONLY_MOUTH.value:
+                        self.retargeting(es.e, self.d_info['exp'], sample_ratio, (14, 17, 19, 20))
+                    elif sample_parts == SamplePart.ONLY_EYES.value:
+                        self.retargeting(es.e, self.d_info['exp'], sample_ratio, (1, 2, 11, 13, 15, 16))
 
-            if isinstance(add_exp, ExpressionSet):
-                es.add(add_exp)
+                es.r = self.calc_fe(es.e, blink, eyebrow, wink, pupil_x, pupil_y, aaa, eee, woo, smile,
+                                    rotate_pitch, rotate_yaw, rotate_roll)
 
-            new_rotate = get_rotation_matrix(s_info['pitch'] + es.r[0], s_info['yaw'] + es.r[1],
-                                             s_info['roll'] + es.r[2])
-            x_d_new = (s_info['scale'] * (1 + es.s)) * ((s_exp + es.e) @ new_rotate) + s_info['t']
+                if isinstance(add_exp, ExpressionSet):
+                    es.add(add_exp)
 
-            x_d_new = self.pipeline.stitching(psi.x_s_user, x_d_new)
+                new_rotate = get_rotation_matrix(s_info['pitch'] + es.r[0], s_info['yaw'] + es.r[1],
+                                                 s_info['roll'] + es.r[2])
+                x_d_new = (s_info['scale'] * (1 + es.s)) * ((s_exp + es.e) @ new_rotate) + s_info['t']
 
-            crop_out = self.pipeline.warp_decode(psi.f_s_user, psi.x_s_user, x_d_new)
-            crop_out = self.pipeline.parse_output(crop_out['out'])[0]
+                x_d_new = self.pipeline.stitching(psi.x_s_user, x_d_new)
 
-            crop_with_fullsize = cv2.warpAffine(crop_out, psi.crop_trans_m, get_rgb_size(psi.src_rgb), cv2.INTER_LINEAR)
-            out = np.clip(psi.mask_ori * crop_with_fullsize + (1 - psi.mask_ori) * psi.src_rgb, 0, 255).astype(np.uint8)
+                crop_out = self.pipeline.warp_decode(psi.f_s_user, psi.x_s_user, x_d_new)
+                crop_out = self.pipeline.parse_output(crop_out['out'])[0]
 
-            temp_out_img_path, out_img_path = get_auto_incremental_file_path(TEMP_DIR, "png"), get_auto_incremental_file_path(OUTPUTS_DIR, "png")
-            save_image(numpy_array=crop_out, output_path=temp_out_img_path)
-            save_image(numpy_array=out, output_path=out_img_path)
+                crop_with_fullsize = cv2.warpAffine(crop_out, psi.crop_trans_m, get_rgb_size(psi.src_rgb), cv2.INTER_LINEAR)
+                out = np.clip(psi.mask_ori * crop_with_fullsize + (1 - psi.mask_ori) * psi.src_rgb, 0, 255).astype(np.uint8)
 
-            new_editor_link.append(es)
+                temp_out_img_path, out_img_path = get_auto_incremental_file_path(TEMP_DIR, "png"), get_auto_incremental_file_path(OUTPUTS_DIR, "png")
+                save_image(numpy_array=crop_out, output_path=temp_out_img_path)
+                save_image(numpy_array=out, output_path=out_img_path)
 
-            return out
-        except Exception as e:
-            raise
+                new_editor_link.append(es)
+
+                return out
+            except Exception as e:
+                raise
 
     def create_video(self,
                      retargeting_eyes,
@@ -252,112 +256,113 @@ class LivePortraitInferencer:
                      driving_images=None,
                      motion_link=None,
                      progress=gr.Progress()):
-        if not turn_on:
-            return None, None
-        src_length = 1
-
-        if src_images is None:
-            if motion_link is not None:
-                self.psi_list = [motion_link[0]]
-            else:
+        with torch.autocast(device_type=self.device, enabled=(self.device == "cuda")):
+            if not turn_on:
                 return None, None
+            src_length = 1
 
-        if src_images is not None:
-            src_length = len(src_images)
-            if id(src_images) != id(self.src_images) or self.crop_factor != crop_factor:
-                self.crop_factor = crop_factor
-                self.src_images = src_images
-                if 1 < src_length:
-                    self.psi_list = self.prepare_source(src_images, crop_factor, True, tracking_src_vid)
+            if src_images is None:
+                if motion_link is not None:
+                    self.psi_list = [motion_link[0]]
                 else:
-                    self.psi_list = [self.prepare_source(src_images, crop_factor)]
+                    return None, None
 
-        cmd_list, cmd_length = self.parsing_command(command, motion_link)
-        if cmd_list is None:
-            return None,None
-        cmd_idx = 0
+            if src_images is not None:
+                src_length = len(src_images)
+                if id(src_images) != id(self.src_images) or self.crop_factor != crop_factor:
+                    self.crop_factor = crop_factor
+                    self.src_images = src_images
+                    if 1 < src_length:
+                        self.psi_list = self.prepare_source(src_images, crop_factor, True, tracking_src_vid)
+                    else:
+                        self.psi_list = [self.prepare_source(src_images, crop_factor)]
 
-        driving_length = 0
-        if driving_images is not None:
-            if id(driving_images) != id(self.driving_images):
-                self.driving_images = driving_images
-                self.driving_values = self.prepare_driving_video(driving_images)
-            driving_length = len(self.driving_values)
+            cmd_list, cmd_length = self.parsing_command(command, motion_link)
+            if cmd_list is None:
+                return None,None
+            cmd_idx = 0
 
-        total_length = max(driving_length, src_length)
+            driving_length = 0
+            if driving_images is not None:
+                if id(driving_images) != id(self.driving_images):
+                    self.driving_images = driving_images
+                    self.driving_values = self.prepare_driving_video(driving_images)
+                driving_length = len(self.driving_values)
 
-        if animate_without_vid:
-            total_length = max(total_length, cmd_length)
+            total_length = max(driving_length, src_length)
 
-        c_i_es = ExpressionSet()
-        c_o_es = ExpressionSet()
-        d_0_es = None
-        out_list = []
+            if animate_without_vid:
+                total_length = max(total_length, cmd_length)
 
-        psi = None
-        for i in range(total_length):
+            c_i_es = ExpressionSet()
+            c_o_es = ExpressionSet()
+            d_0_es = None
+            out_list = []
 
-            if i < src_length:
-                psi = self.psi_list[i]
-                s_info = psi.x_s_info
-                s_es = ExpressionSet(erst=(s_info['kp'] + s_info['exp'], torch.Tensor([0, 0, 0]), s_info['scale'], s_info['t']))
+            psi = None
+            for i in range(total_length):
 
-            new_es = ExpressionSet(es=s_es)
+                if i < src_length:
+                    psi = self.psi_list[i]
+                    s_info = psi.x_s_info
+                    s_es = ExpressionSet(erst=(s_info['kp'] + s_info['exp'], torch.Tensor([0, 0, 0]), s_info['scale'], s_info['t']))
 
-            if i < cmd_length:
-                cmd = cmd_list[cmd_idx]
-                if 0 < cmd.change:
-                    cmd.change -= 1
-                    c_i_es.add(cmd.es)
-                    c_i_es.sub(c_o_es)
-                elif 0 < cmd.keep:
-                    cmd.keep -= 1
+                new_es = ExpressionSet(es=s_es)
 
-                new_es.add(c_i_es)
+                if i < cmd_length:
+                    cmd = cmd_list[cmd_idx]
+                    if 0 < cmd.change:
+                        cmd.change -= 1
+                        c_i_es.add(cmd.es)
+                        c_i_es.sub(c_o_es)
+                    elif 0 < cmd.keep:
+                        cmd.keep -= 1
 
-                if cmd.change == 0 and cmd.keep == 0:
-                    cmd_idx += 1
-                    if cmd_idx < len(cmd_list):
-                        c_o_es = ExpressionSet(es=c_i_es)
-                        cmd = cmd_list[cmd_idx]
-                        c_o_es.div(cmd.change)
-            elif 0 < cmd_length:
-                new_es.add(c_i_es)
+                    new_es.add(c_i_es)
 
-            if i < driving_length:
-                d_i_info = self.driving_values[i]
-                d_i_r = torch.Tensor([d_i_info['pitch'], d_i_info['yaw'], d_i_info['roll']])#.float().to(device="cuda:0")
+                    if cmd.change == 0 and cmd.keep == 0:
+                        cmd_idx += 1
+                        if cmd_idx < len(cmd_list):
+                            c_o_es = ExpressionSet(es=c_i_es)
+                            cmd = cmd_list[cmd_idx]
+                            c_o_es.div(cmd.change)
+                elif 0 < cmd_length:
+                    new_es.add(c_i_es)
 
-                if d_0_es is None:
-                    d_0_es = ExpressionSet(erst = (d_i_info['exp'], d_i_r, d_i_info['scale'], d_i_info['t']))
+                if i < driving_length:
+                    d_i_info = self.driving_values[i]
+                    d_i_r = torch.Tensor([d_i_info['pitch'], d_i_info['yaw'], d_i_info['roll']])#.float().to(device="cuda:0")
 
-                    self.retargeting(s_es.e, d_0_es.e, retargeting_eyes, (11, 13, 15, 16))
-                    self.retargeting(s_es.e, d_0_es.e, retargeting_mouth, (14, 17, 19, 20))
+                    if d_0_es is None:
+                        d_0_es = ExpressionSet(erst = (d_i_info['exp'], d_i_r, d_i_info['scale'], d_i_info['t']))
 
-                new_es.e += d_i_info['exp'] - d_0_es.e
-                new_es.r += d_i_r - d_0_es.r
-                new_es.t += d_i_info['t'] - d_0_es.t
+                        self.retargeting(s_es.e, d_0_es.e, retargeting_eyes, (11, 13, 15, 16))
+                        self.retargeting(s_es.e, d_0_es.e, retargeting_mouth, (14, 17, 19, 20))
 
-            r_new = get_rotation_matrix(
-                s_info['pitch'] + new_es.r[0], s_info['yaw'] + new_es.r[1], s_info['roll'] + new_es.r[2])
-            d_new = new_es.s * (new_es.e @ r_new) + new_es.t
-            d_new = self.pipeline.stitching(psi.x_s_user, d_new)
-            crop_out = self.pipeline.warp_decode(psi.f_s_user, psi.x_s_user, d_new)
-            crop_out = self.pipeline.parse_output(crop_out['out'])[0]
+                    new_es.e += d_i_info['exp'] - d_0_es.e
+                    new_es.r += d_i_r - d_0_es.r
+                    new_es.t += d_i_info['t'] - d_0_es.t
 
-            crop_with_fullsize = cv2.warpAffine(crop_out, psi.crop_trans_m, get_rgb_size(psi.src_rgb),
-                                                cv2.INTER_LINEAR)
-            out = np.clip(psi.mask_ori * crop_with_fullsize + (1 - psi.mask_ori) * psi.src_rgb, 0, 255).astype(
-                np.uint8)
-            out_list.append(out)
+                r_new = get_rotation_matrix(
+                    s_info['pitch'] + new_es.r[0], s_info['yaw'] + new_es.r[1], s_info['roll'] + new_es.r[2])
+                d_new = new_es.s * (new_es.e @ r_new) + new_es.t
+                d_new = self.pipeline.stitching(psi.x_s_user, d_new)
+                crop_out = self.pipeline.warp_decode(psi.f_s_user, psi.x_s_user, d_new)
+                crop_out = self.pipeline.parse_output(crop_out['out'])[0]
 
-            progress(i/total_length, "predicting..")
+                crop_with_fullsize = cv2.warpAffine(crop_out, psi.crop_trans_m, get_rgb_size(psi.src_rgb),
+                                                    cv2.INTER_LINEAR)
+                out = np.clip(psi.mask_ori * crop_with_fullsize + (1 - psi.mask_ori) * psi.src_rgb, 0, 255).astype(
+                    np.uint8)
+                out_list.append(out)
 
-        if len(out_list) == 0:
-            return None
+                progress(i/total_length, "predicting..")
 
-        out_imgs = torch.cat([pil2tensor(img_rgb) for img_rgb in out_list])
-        return out_imgs
+            if len(out_list) == 0:
+                return None
+
+            out_imgs = torch.cat([pil2tensor(img_rgb) for img_rgb in out_list])
+            return out_imgs
 
     def download_if_no_models(self,
                               model_type: str = ModelType.HUMAN.value,
