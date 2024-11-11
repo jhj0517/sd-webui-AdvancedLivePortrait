@@ -12,6 +12,7 @@ from ultralytics.utils import LOGGER as ultralytics_logger
 from enum import Enum
 from typing import Union
 import torch
+import numpy as np
 
 from scripts.advanced_live_portrait_modules.utils.paths import *
 from scripts.advanced_live_portrait_modules.utils.image_helper import *
