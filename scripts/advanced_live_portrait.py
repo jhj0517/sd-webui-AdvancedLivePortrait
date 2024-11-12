@@ -58,12 +58,12 @@ class App:
 
                 with gr.Row():
                     with gr.Column():
-                        img_ref = gr.Image(label=_("Reference Image"), height=500)
+                        img_ref = gr.Image(label=_("Reference Image"), height="100vh")
                 with gr.Row():
                     btn_gen = gr.Button("GENERATE", visible=False)
                 with gr.Row(equal_height=True):
                     with gr.Column(scale=9):
-                        img_out = gr.Image(label=_("Output Image"), height=500)
+                        img_out = gr.Image(label=_("Output Image"), height="100vh")
                     with gr.Column(scale=1):
                         expression_parameters = self.create_parameters()
                         btn_openfolder = gr.Button('📂')
